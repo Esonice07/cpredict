@@ -6,6 +6,7 @@ import streamlit as st
 from prophet import Prophet
 from prophet.plot import plot_plotly
 from plotly import graph_objs as go
+import pandas_datareader as web
 
 df = pd.DataFrame()
 
@@ -13,11 +14,15 @@ crypto_symbols = ['BTC', 'ETH', 'LTC', 'DOGE', 'SOL', 'USDT', 'USDC', 'BNB', 'XR
                  'SHIB', 'LEO', 'WBTC', 'AVAX', 'YOUC', 'DESO', 'DAI', 'LINK', 'XLM',  'MATIC', 'UNI1', 'STETH', 'LTC', 'FTT']
 
 
+def load_data_yahoo(symbol):
+    return web.Datareader(symbol, 'yahoo', dt.datatime(2016, 1, 1,), dt.datatime.now())
+
+
 for coins in crypto_symbols:
     coin_index = crypto_symbols.index(coins)
 
-    yf_data = yf.Ticker(f'{coins}-USD').history(start='2014-01-01', end=dt.datetime.now(), interval='1d')
-
+    #yf_data = yf.Ticker(f'{coins}-USD').history(start='2014-01-01', end=dt.datetime.now(), interval='1d')
+    yf_data = load_data_yahoo(f'{coins}-USD')
     cdf = pd.DataFrame(yf_data)
     cdf['symbol'] = coins
     df = df.append(cdf)
